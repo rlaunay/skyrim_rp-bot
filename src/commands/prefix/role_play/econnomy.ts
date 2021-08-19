@@ -1,10 +1,10 @@
-import { Command } from '../../interfaces/commands';
-import { isPositiveInt } from '../../utils/helpers';
-import { getUserFromMention } from './../../utils/mentions';
-import { isAdminOrModo } from './../../utils/permissions';
-import { selectChar } from '../../messages/character';
-import confirmation from '../../messages/confirmation';
-import { addMoneyToCharacter, removeMoneyToCharacter } from './../../firebase/users';
+import { Command } from '../../../interfaces/commands';
+import { isPositiveInt } from '../../../utils/helpers';
+import { getUserFromMention } from '../../../utils/mentions';
+import { isAdminOrModo } from '../../../utils/permissions';
+import { selectChar } from '../../../messages/character';
+import confirmation from '../../../messages/confirmation';
+import { addMoneyToCharacter, removeMoneyToCharacter } from '../../../firebase/users';
 
 const econnmy: Command = {
   name: 'money',

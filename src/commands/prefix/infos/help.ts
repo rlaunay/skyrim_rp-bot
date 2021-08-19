@@ -1,5 +1,5 @@
 import { MessageEmbed } from 'discord.js';
-import { Command } from '../../interfaces/commands';
+import { Command } from '../../../interfaces/commands';
 
 const help: Command = {
   name: 'help',

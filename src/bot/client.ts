@@ -44,15 +44,15 @@ export default class Bot extends Client {
 
   commandsHandler = async (): Promise<void> => {
     const commandsFolders = fs
-      .readdirSync(path.join(__dirname, '..', 'commands'));
+      .readdirSync(path.join(__dirname, '..', 'commands', 'prefix'));
 
     await Promise.all(commandsFolders.map(async folder => {
       const commandsFiles = fs
-        .readdirSync(path.join(__dirname, '..', 'commands', folder))
+        .readdirSync(path.join(__dirname, '..', 'commands', 'prefix', folder))
         .filter(file => file.endsWith('.js'));
       
       await Promise.all(commandsFiles.map(async file => {
-        const res = await import(`./../commands/${folder}/${file}`);
+        const res = await import(`./../commands/prefix/${folder}/${file}`);
         const command: Command = res.default;
 
         this.commands.set(command.name, command);
