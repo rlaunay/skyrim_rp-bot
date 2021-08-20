@@ -1,4 +1,4 @@
-import { Command } from '../../../interfaces/commands';
+import { PrefixCommand } from '../../../interfaces/commands';
 import { isPositiveInt } from '../../../utils/helpers';
 import { getUserFromMention } from '../../../utils/mentions';
 import { isAdminOrModo } from '../../../utils/permissions';
@@ -6,7 +6,7 @@ import { selectChar } from '../../../messages/character';
 import confirmation from '../../../messages/confirmation';
 import { addMoneyToCharacter, removeMoneyToCharacter } from '../../../firebase/users';
 
-const econnmy: Command = {
+const econnmy: PrefixCommand = {
   name: 'money',
   description: 'Allows the management of a user\'s characters money',
   aliases: ['m', 'bal'],

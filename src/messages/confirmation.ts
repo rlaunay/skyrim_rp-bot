@@ -1,8 +1,5 @@
 import { Message, MessageActionRow, MessageButton, MessageComponentInteraction } from 'discord.js';
 
-// await reply.react('✅');
-// await reply.react('❌');
-
 export default async function confirmation(message: Message, text: string): Promise<boolean> {
   const buttons = new MessageActionRow()
     .addComponents(

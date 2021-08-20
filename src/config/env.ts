@@ -4,3 +4,5 @@ dotenv.config();
 export const token = process.env.TOKEN || '';
 export const prefix = process.env.PREFIX || '';
 export const channelId = process.env.CALENDAR || '';
+export const clientId = process.env.CLIENT_ID || '';
+export const guildId = process.env.GUILD_ID || '';

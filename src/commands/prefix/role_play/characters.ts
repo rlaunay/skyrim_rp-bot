@@ -1,4 +1,4 @@
-import { Command } from '../../../interfaces/commands';
+import { PrefixCommand } from '../../../interfaces/commands';
 import { selectChar, diplayChar } from '../../../messages/character';
 import confirmation from '../../../messages/confirmation';
 import { getUserFromMention } from '../../../utils/mentions';
@@ -6,7 +6,7 @@ import { isAdminOrModo } from '../../../utils/permissions';
 import { delCharacter, updateCharStatus, createCharacter } from '../../../firebase/users';
 
 
-const characters: Command = {
+const characters: PrefixCommand = {
   name: 'character',
   description: 'Allows the management of a user\'s characters',
   aliases: ['personnage', 'char', 'perso'],
