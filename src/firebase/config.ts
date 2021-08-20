@@ -1,9 +1,12 @@
 import * as firebaseAdmin from 'firebase-admin';
-import { ServiceAccount } from 'firebase-admin';
-import serviceAccount from './serviceAccount.json';
 
+// TODO mettre les cred en variable ENV
 firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(serviceAccount as ServiceAccount)
+  credential: firebaseAdmin.credential.cert({
+    projectId: '',
+    clientEmail: '',
+    privateKey: ''
+  })
 });
 
 export const db = firebaseAdmin.firestore();
