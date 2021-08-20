@@ -11,7 +11,7 @@ const ping: SlashCommand = {
     await interaction.client.application?.fetchAssets();
     const ms2 = Date.now();
 
-    interaction.reply({ content: `Pong (**${ms2 - ms1}**)` });
+    interaction.reply({ content: `Pong (**${ms2 - ms1}ms**)` });
   }
 };
 

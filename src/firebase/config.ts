@@ -1,11 +1,11 @@
 import * as firebaseAdmin from 'firebase-admin';
+import { projectId, privateKey, clientEmail } from './../config/env';
 
-// TODO mettre les cred en variable ENV
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert({
-    projectId: '',
-    clientEmail: '',
-    privateKey: ''
+    projectId,
+    clientEmail,
+    privateKey
   })
 });
 

@@ -1,5 +1,5 @@
 import { CommandInteraction, ContextMenuInteraction, Message, Permissions } from 'discord.js';
-import { SlashCommandBuilder } from '@discordjs/builders';
+import { SlashCommandBuilder, SlashCommandSubcommandBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders';
 import { APIApplicationCommandOption } from 'discord-api-types';
 
 export interface PrefixCommand {
@@ -16,7 +16,7 @@ export interface PrefixCommand {
 }
 
 export interface SlashCommand {
-  data: SlashCommandBuilder;
+  data: SlashCommandBuilder | SlashCommandSubcommandBuilder | SlashCommandSubcommandsOnlyBuilder;
   execute: (interaction: CommandInteraction) => void;
 }
 
