@@ -34,7 +34,8 @@ const characters: SlashCommand = {
   async execute(interaction) {
 
     if (interaction.options.getSubcommand() === 'info') {
-      return interaction.reply({ content: 'Infor perso' });
+      interaction.reply({ content: 'une 1ere reponse' });
+      return setTimeout(() => interaction.editReply('oui'), 3000);
     }
 
     if (interaction.options.getSubcommand() === 'new') {
