@@ -71,8 +71,8 @@ const econnmy: SlashCommand = {
     try {
       if (interaction.options.getSubcommand() === 'add') {
         const char = await charInteractionSelect(interaction, user);
-        if (!char) return;
-
+        if (!char) throw Error('No characterr');
+      
         await addMoneyToCharacter(user.id, char, money);
         return interaction.editReply({
           content: `Vous avez bien ajouté ${money} :septims: à \`${char.name}\`.`,
@@ -80,10 +80,10 @@ const econnmy: SlashCommand = {
         });
       }
 
-      if (interaction.options.getSubcommand() === 'remove') {
+      if (interaction.options.getSubcommand() === 'remove') {    
         const char = await charInteractionSelect(interaction, user);
-        if (!char) return;
-        
+        if (!char) throw Error('No characterr');
+       
         const res = await removeMoneyToCharacter(user.id, char, money);
         if (res) {
           return interaction.editReply({
@@ -117,7 +117,11 @@ const econnmy: SlashCommand = {
         );
         if (!receiverChar) return;
   
-        const choice = await confirmationInteract(interaction, `Voulez vous vraiment donner ${money} :septims: à \`${receiverChar.name}\` ?`);
+        const choice = await confirmationInteract(
+          interaction, 
+          `Voulez vous vraiment donner ${money} :septims: à \`${receiverChar.name}\` ?`
+        );
+
         if (choice) {
           const rmMoney = await removeMoneyToCharacter(giver.id, giverChar, money);
   

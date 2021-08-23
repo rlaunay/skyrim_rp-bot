@@ -5,7 +5,7 @@ const help: PrefixCommand = {
   name: 'help',
   description: 'List all of my commands or info about a specific command.',
   aliases: ['aled'],
-  usages: ['[command name]'],
+  usages: ['<command name>'],
   cooldown: 5,
   execute(message, args) {
     const reply = new MessageEmbed().setColor('#2ecc71');
