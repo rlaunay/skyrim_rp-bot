@@ -1,9 +1,10 @@
 import { SlashCommand } from '../../../../interfaces/commands';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { charInteractionSelect, interactionDisplayChar } from '../../../../interactions/characterSelector';
-import { createCharacter } from '../../../../firebase/users';
+import { createCharacter, delCharacter, updateCharStatus } from '../../../../firebase/users';
 import { isAdminOrModo } from '../../../../utils/permissions';
 import { GuildMember } from 'discord.js';
+import confirmationInteract from '../../../../interactions/confirmation';
 
 
 const characters: SlashCommand = {
@@ -60,11 +61,30 @@ const characters: SlashCommand = {
     }
 
     if (interaction.options.getSubcommand() === 'del') {
-      return interaction.reply({ content: 'Suprression de perso' });
+      const char = await charInteractionSelect(interaction, user);
+      if (!char) return;
+
+      const choice = await confirmationInteract(interaction, `Voulez vous vraiment supprimer le personnage \`${char.name}\` pour ${user.tag}`);
+          
+      if (choice) {
+        await delCharacter(user.id, char);
+        interaction.editReply({ 
+          content: `Vous avez bien supprimé le personnage \`${char.name}\` pour ${user.tag}.`,
+          components: []
+        });
+      }
+      return;
     }
 
     if (interaction.options.getSubcommand() === 'status') {
-      return interaction.reply({ content: 'Changement dde status' });
+      const char = await charInteractionSelect(interaction, user);
+      if (!char) return;
+
+      await updateCharStatus(user.id, char);
+      return interaction.editReply({ 
+        content: `Vous avez bien changer le statut du personnage \`${char.name}\` pour ${user.tag}.`,
+        components: []
+      });
     }
   }
 };

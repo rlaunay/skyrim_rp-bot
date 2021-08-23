@@ -1,20 +1,21 @@
-import { Message, MessageActionRow, MessageSelectMenu, MessageSelectOptionData, User, MessageEmbed, SelectMenuInteraction, CommandInteraction } from 'discord.js';
+import { Message, MessageActionRow, MessageSelectMenu, MessageSelectOptionData, User, MessageEmbed, SelectMenuInteraction } from 'discord.js';
 import { getUser } from '../firebase/users';
 import { Character } from '../interfaces/users';
 
 const emote = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'];
 
-export const createSelector = async (
-  message: Message | CommandInteraction,
-  chars: Character[],
-  user: User,
-  heading: string
-): Promise<void | Message> => {
+export const selectChar = async (message: Message, user: User, heading = 'Personnage(s) de '): Promise<Character | undefined> => {
+  const allUserChars = await getUser(user.id);
+  if (!allUserChars) {
+    message.reply(`<@${user.id}> ne possède pas encore de personnages.`);
+    return;
+  }
+
   let reply = `\`${heading}\`<@${user.id}>\` :\`\nஜ══════════════════ஜ\n> `;
   const options: MessageSelectOptionData[] = [];
 
 
-  chars.forEach((char, i) => {
+  allUserChars.forEach((char, i) => {
     const status = char.status === 1 ? ':green_circle:' : ':red_circle:';
     reply += `\n>  〘${emote[i]}〙➤ ${char.name} ${status} \n> `;
     options.push({ emoji: emote[i], label: char.name, value: i.toString() });
@@ -29,17 +30,7 @@ export const createSelector = async (
         .addOptions(options)
     );
 
-  return await message.reply({ content: reply, components: [selector] });
-};
-
-export const selectChar = async (message: Message, user: User, heading = 'Personnage(s) de '): Promise<Character | undefined> => {
-  const allUserChars = await getUser(user.id);
-  if (!allUserChars) {
-    message.reply(`<@${user.id}> ne possède pas encore de personnages.`);
-    return;
-  }
-
-  const messagReply = await createSelector(message, allUserChars, user, heading);
+  const messagReply = await message.reply({ content: reply, components: [selector] });
   if (!messagReply) return;
 
   const filter = (i: SelectMenuInteraction) => {

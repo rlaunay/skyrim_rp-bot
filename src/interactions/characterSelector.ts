@@ -1,16 +1,47 @@
-import { CommandInteraction, ContextMenuInteraction, SelectMenuInteraction, User } from 'discord.js';
+import { CommandInteraction, ContextMenuInteraction, MessageActionRow, MessageSelectMenu, MessageSelectOptionData, SelectMenuInteraction, User } from 'discord.js';
 import { getUser } from '../firebase/users';
 import { Character } from '../interfaces/users';
-import { createCharEmbed, createSelector } from '../messages/character';
+import { createCharEmbed } from '../messages/character';
 
-export const charInteractionSelect = async (inter: CommandInteraction | ContextMenuInteraction, user: User, heading = 'Personnage(s) de '): Promise<Character | undefined> => {
+const emote = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'];
+
+export const charInteractionSelect = async (
+  inter: CommandInteraction | ContextMenuInteraction, 
+  user: User,
+  isFirst = true,
+  heading = 'Personnage(s) de '
+): Promise<Character | undefined> => {
   const allUserChars = await getUser(user.id);
   if (!allUserChars) {
     inter.reply(`<@${user.id}> ne possède pas encore de personnages.`);
     return;
   }
 
-  await createSelector(inter, allUserChars, user, heading);
+  let content = `\`${heading}\`<@${user.id}>\` :\`\nஜ══════════════════ஜ\n> `;
+  const options: MessageSelectOptionData[] = [];
+
+
+  allUserChars.forEach((char, i) => {
+    const status = char.status === 1 ? ':green_circle:' : ':red_circle:';
+    content += `\n>  〘${emote[i]}〙➤ ${char.name} ${status} \n> `;
+    options.push({ emoji: emote[i], label: char.name, value: i.toString() });
+  });
+  content += '\nஜ══════════════════ஜ';
+
+  const selector = new MessageActionRow()
+    .addComponents(
+      new MessageSelectMenu()
+        .setCustomId('selectchar')
+        .setPlaceholder('Nothing selected')
+        .addOptions(options)
+    );
+
+  if (isFirst) {
+    await inter.reply({ content: content, components: [selector] });
+  } else {
+    await inter.editReply({ content: content, components: [selector] });
+  }
+
   const reply = await inter.fetchReply();
   if (reply.type !== 'APPLICATION_COMMAND') return;
 
