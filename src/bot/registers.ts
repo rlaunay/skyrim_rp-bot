@@ -3,17 +3,17 @@ import { Routes } from 'discord-api-types/v9';
 import { token, clientId, guildId } from './../config/env';
 import fs from 'fs';
 import path from 'path';
-import { SlashCommand, JsonCmd } from '../interfaces/commands';
+import { SlashCommand, JsonCmd, UserCommand } from '../interfaces/commands';
 
 const rest = new REST({ version: '9' }).setToken(token);
 
 export default async function registers (): Promise<void> {
   const commands: JsonCmd[] = [];
 
-  const commandsFolders = fs
+  const slashCommandsFolders = fs
     .readdirSync(path.join(__dirname, '..', 'commands', 'application', 'slash'));
 
-  await Promise.all(commandsFolders.map(async (folder) => {
+  await Promise.all(slashCommandsFolders.map(async (folder) => {
     const commandFiles = fs
       .readdirSync(path.join(__dirname, '..', 'commands', 'application', 'slash', folder))
       .filter(file => file.endsWith('.js'));
@@ -23,6 +23,20 @@ export default async function registers (): Promise<void> {
 
       commands.push(command.data.toJSON());
     }));
+  }));
+
+  const userCommandsFiles = fs
+    .readdirSync(path.join(__dirname, '..', 'commands', 'application', 'user'))
+    .filter(file => file.endsWith('.js'));
+      
+  await Promise.all(userCommandsFiles.map(async file => {
+    const res = await import(`./../commands/application/user/${file}`);
+    const command: UserCommand = res.default;
+
+    commands.push({
+      name: command.name,
+      type: command.type
+    });
   }));
 
 

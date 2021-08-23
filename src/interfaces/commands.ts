@@ -28,8 +28,9 @@ export interface UserCommand {
 
 export type JsonCmd = {
   name: string;
-  description: string;
-  options: APIApplicationCommandOption[];
+  type?: number;
+  description?: string;
+  options?: APIApplicationCommandOption[];
 }
 
 export enum Type {

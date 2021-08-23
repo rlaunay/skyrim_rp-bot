@@ -1,5 +1,9 @@
 import { SlashCommand } from '../../../../interfaces/commands';
 import { SlashCommandBuilder } from '@discordjs/builders';
+import { charInteractionSelect, interactionDisplayChar } from '../../../../interactions/characterSelector';
+import { createCharacter } from '../../../../firebase/users';
+import { isAdminOrModo } from '../../../../utils/permissions';
+import { GuildMember } from 'discord.js';
 
 
 const characters: SlashCommand = {
@@ -32,14 +36,27 @@ const characters: SlashCommand = {
         .addUserOption(option => option.setName('user').setDescription('Joueur cible'))
     ),
   async execute(interaction) {
+    if (['new', 'del', 'status'].includes(interaction.options.getSubcommand()) && !isAdminOrModo(interaction.member as GuildMember)) {
+      return interaction.reply('Vous n\'avez pas les droits pour cette command');
+    }
+
+    const user = interaction.options.getUser('user') || interaction.user;
+
 
     if (interaction.options.getSubcommand() === 'info') {
-      interaction.reply({ content: 'une 1ere reponse' });
-      return setTimeout(() => interaction.editReply('oui'), 3000);
+      const char = await charInteractionSelect(interaction, user);
+      if (!char) return;
+
+      return await interactionDisplayChar(interaction, user, char);
     }
 
     if (interaction.options.getSubcommand() === 'new') {
-      return interaction.reply({ content: 'Nouveau perso' });
+      const charName = interaction.options.getString('nom', true);
+
+      const res = await createCharacter(user.id, user.tag, charName);
+      if (!res) return interaction.reply(`${user.tag} possède déjà 9 personnages ! Impossible d'en ajouter un nouveau.`);
+
+      return interaction.reply(`Vous avez bien créé le personnage \`${charName}\` pour ${user.tag}.`);
     }
 
     if (interaction.options.getSubcommand() === 'del') {

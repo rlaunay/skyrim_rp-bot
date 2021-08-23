@@ -1,21 +1,20 @@
-import { Message, MessageActionRow, MessageSelectMenu, MessageSelectOptionData, User, MessageEmbed, SelectMenuInteraction } from 'discord.js';
+import { Message, MessageActionRow, MessageSelectMenu, MessageSelectOptionData, User, MessageEmbed, SelectMenuInteraction, CommandInteraction } from 'discord.js';
 import { getUser } from '../firebase/users';
 import { Character } from '../interfaces/users';
 
 const emote = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'];
 
-export const selectChar = async (message: Message, user: User, heading = 'Personnage(s) de '): Promise<Character | undefined> => {
-  const allUserChars = await getUser(user.id);
-  if (!allUserChars) {
-    message.reply(`<@${user.id}> ne possède pas encore de personnages.`);
-    return;
-  }
-
+export const createSelector = async (
+  message: Message | CommandInteraction,
+  chars: Character[],
+  user: User,
+  heading: string
+): Promise<void | Message> => {
   let reply = `\`${heading}\`<@${user.id}>\` :\`\nஜ══════════════════ஜ\n> `;
   const options: MessageSelectOptionData[] = [];
 
 
-  allUserChars.forEach((char, i) => {
+  chars.forEach((char, i) => {
     const status = char.status === 1 ? ':green_circle:' : ':red_circle:';
     reply += `\n>  〘${emote[i]}〙➤ ${char.name} ${status} \n> `;
     options.push({ emoji: emote[i], label: char.name, value: i.toString() });
@@ -25,14 +24,26 @@ export const selectChar = async (message: Message, user: User, heading = 'Person
   const selector = new MessageActionRow()
     .addComponents(
       new MessageSelectMenu()
-        .setCustomId('select')
+        .setCustomId('selectchar')
         .setPlaceholder('Nothing selected')
         .addOptions(options)
     );
 
-  const messagReply = await message.reply({ content: reply, components: [selector] });
+  return await message.reply({ content: reply, components: [selector] });
+};
+
+export const selectChar = async (message: Message, user: User, heading = 'Personnage(s) de '): Promise<Character | undefined> => {
+  const allUserChars = await getUser(user.id);
+  if (!allUserChars) {
+    message.reply(`<@${user.id}> ne possède pas encore de personnages.`);
+    return;
+  }
+
+  const messagReply = await createSelector(message, allUserChars, user, heading);
+  if (!messagReply) return;
+
   const filter = (i: SelectMenuInteraction) => {
-    return i.user.id === message.author.id && i.customId === 'select';
+    return i.user.id === message.author.id && i.customId === 'selectchar';
   };
 
   try {
@@ -46,7 +57,7 @@ export const selectChar = async (message: Message, user: User, heading = 'Person
   }
 };
 
-export const diplayChar = async (message: Message, user: User, character: Character): Promise<void> => {
+export const createCharEmbed = (user: User, character: Character): MessageEmbed => {
   const status = character.status === 1 ? 'Atcif' : 'Inactif';
   const charEmbed = new MessageEmbed()
     .setColor('#2ecc71')
@@ -58,5 +69,9 @@ export const diplayChar = async (message: Message, user: User, character: Charac
       { name: 'Status :', value: status, inline: false },
     );
 
-  message.reply({ embeds: [charEmbed] });
+  return charEmbed;
+};
+
+export const diplayChar = async (message: Message, user: User, character: Character): Promise<void> => {
+  message.reply({ embeds: [createCharEmbed(user, character)] });
 };

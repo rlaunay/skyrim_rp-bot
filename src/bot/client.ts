@@ -2,13 +2,14 @@ import fs from 'fs';
 import path from 'path';
 import { Client, Collection, Intents } from 'discord.js';
 import Event from '../interfaces/event';
-import { PrefixCommand, SlashCommand } from '../interfaces/commands';
+import { PrefixCommand, SlashCommand, UserCommand } from '../interfaces/commands';
 import registers from './registers';
 
 export default class Bot extends Client {
   cooldowns = new Collection<string, Collection<string, number>>()
   prefixCommands = new Collection<string, PrefixCommand>()
   slashCommands = new Collection<string, SlashCommand>()
+  userCommands = new Collection<string, UserCommand>()
 
   constructor(readonly prefix: string) {
     super({
@@ -80,10 +81,24 @@ export default class Bot extends Client {
     }));
   }
 
+  userCommandsHandler = async (): Promise<void> => {
+    const commandsFiles = fs
+      .readdirSync(path.join(__dirname, '..', 'commands', 'application', 'user'))
+      .filter(file => file.endsWith('.js'));
+      
+    await Promise.all(commandsFiles.map(async file => {
+      const res = await import(`./../commands/application/user/${file}`);
+      const command: UserCommand = res.default;
+
+      this.userCommands.set(command.name, command);
+    }));
+  }
+
   run = async (token: string): Promise<void> => {
     await this.eventHandler();
     await this.prefixCommandsHandler();
     await this.slashCommandsHandler();
+    await this.userCommandsHandler();
     await registers();
     await this.login(token);
   }
