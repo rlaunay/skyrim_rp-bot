@@ -49,17 +49,17 @@ const createRandomMemoized = memoized<(() => string)| undefined>(createRandom);
 
 export default function randomMeteo(client: Client): void {
   setInterval(async () => {
-    const temps = await getTemps();
-    if (!temps) return;
+    const meteos = await getTemps();
+    if (!meteos) return;
+
+    await Promise.all(meteos.map(async (meteo) => {
+      const channel = await client.channels.fetch(meteo.channelId);
+      if (!channel || channel && !channel.isVoice()) return;
   
-    const channel = await client.channels.fetch(temps.id);
-    if (!channel || channel && !channel.isText()) return;
-
-    const randomizeTemp = createRandomMemoized([temps.beau, temps.humide, temps.froid]);
-    if (!randomizeTemp) return;
-    const res = randomizeTemp();
-    console.log(res);
-
-    channel.send({ content: res });
-  }, 10000);
+      const randomizeTemp = createRandomMemoized([meteo.beau, meteo.humide, meteo.froid]);
+      if (!randomizeTemp) return;
+      const res = randomizeTemp();
+      channel.edit({ name: res });
+    }));
+  }, 60000);
 }

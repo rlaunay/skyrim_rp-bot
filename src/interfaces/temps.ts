@@ -1,6 +1,7 @@
 export class Temps {
   constructor(
-    readonly id: string,
+    readonly channelId: string,
+    readonly name: string,
     readonly beau: number,
     readonly humide: number,
     readonly froid: number
@@ -15,6 +16,6 @@ export const tempsConverter = {
   },
   fromFirestore: (snapshot: FirebaseFirestore.QueryDocumentSnapshot): Temps => {
     const data = snapshot.data();
-    return new Temps(data.id, data.beau, data.humide, data.froid);
+    return new Temps(data.channelId, data.name, data.beau, data.humide, data.froid);
   }
 };
