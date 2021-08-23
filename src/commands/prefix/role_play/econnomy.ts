@@ -24,72 +24,59 @@ const econnmy: PrefixCommand = {
     if ((args.length < 2 || args.length > 3) && !isPositiveInt(args[1])) {
       return message.reply(`Wrong arguments use \`${client.prefix}help ${this.name}\` for usage informations`);
     }
+    const money = +args[1];
 
-    const money = args[1];
+    try {
 
-    if (args[0] === 'add') {
-      const char = await selectChar(message, user);
-      if (!char) return;
-
-      const choice = await confirmation(message, `Voulez vous vraiment ajouter ${money} :septims: à \`${char.name}\` ?`);
-      if (choice) {
-        const res = await addMoneyToCharacter(user.id, char, +money);
-        if (res) {
-          message.reply(`Vous avez bien ajouté ${money} :septims: à \`${char.name}\`.`);
-        } else {
-          message.reply('Une erreur est survenue lors de l\'ajout de septims');
-        }
+      if (args[0] === 'add') {
+        const char = await selectChar(message, user);
+        if (!char) return;
+  
+        await addMoneyToCharacter(user.id, char, money);
+        message.reply(`Vous avez bien ajouté ${money} :septims: à \`${char.name}\`.`);
+        return;
       }
-      return;
-    }
-
-    else if (args[0] === 'remove') {
-      const char = await selectChar(message, user);
-      if (!char) return;
-
-      const choice = await confirmation(message, `Voulez vous vraiment retirer ${money} :septims: à \`${char.name}\` ?`);
-      if (choice) {
-        const res = await removeMoneyToCharacter(user.id, char, +money);
-        if (res.ok) {
+  
+      else if (args[0] === 'remove') {
+        const char = await selectChar(message, user);
+        if (!char) return;
+  
+        const res = await removeMoneyToCharacter(user.id, char, money);
+        if (res) {
           message.reply(`Vous avez bien retiré ${money} :septims: à \`${char.name}\`.`);
         } else {
-          if (res.message === 'moneyLimit') {
-            return message.reply(`Vous ne pouvez pas retirer ${money} :septims: à \`${char.name}\` car il ne dispose pas ce de montant.`);
+          return message.reply(`Vous ne pouvez pas retirer ${money} :septims: à \`${char.name}\` car il ne dispose pas ce de montant.`);
+        }
+        return;
+      }
+  
+      else if (args[0] === 'give' && getUserFromMention(args[2], client)) {
+        const giver = await selectChar(message, message.author, 'Séléctionner le personnage qui va donné ');
+        if (!giver) return;
+  
+        const receiver = await selectChar(message, user, 'Séléctionner le personnage qui va recevoir ');
+        if (!receiver) return;
+  
+        const choice = await confirmation(message, `Voulez vous vraiment donner ${money} :septims: à \`${receiver.name}\` ?`);
+        if (choice) {
+          const rmMoney = await removeMoneyToCharacter(message.author.id, giver, money);
+  
+          if (!rmMoney) {
+            return message.reply(`Vous ne disposez pas de ${money} :septims: ! Transaction impossible.`);
           }
-          message.reply('Une erreur est survenue lors du retrait de septims');
-        }
-      }
-      return;
-    }
-
-    else if (args[0] === 'give' && getUserFromMention(args[2], client)) {
-      const giver = await selectChar(message, message.author, 'Séléctionner le personnage qui va donné ');
-      if (!giver) return;
-
-      const receiver = await selectChar(message, user, 'Séléctionner le personnage qui va recevoir ');
-      if (!receiver) return;
-
-      const choice = await confirmation(message, `Voulez vous vraiment donner ${money} :septims: à \`${receiver.name}\` ?`);
-      if (choice) {
-        const rmMoney = await removeMoneyToCharacter(message.author.id, giver, +money);
-
-        if (!rmMoney.ok && rmMoney.message === 'moneyLimit') {
-          return message.reply(`Vous ne disposez pas de ${money} :septims: ! Transaction impossible.`);
-        }
-
-        const addMoney = await addMoneyToCharacter(user.id, receiver, +money);
-
-        if (rmMoney.ok && addMoney) {
+  
+          await addMoneyToCharacter(user.id, receiver, money);
           message.reply(`Vous avez bien donné ${money} :septims: à \`${receiver.name}\`.`);
-        } else {
-          message.reply('Une erreur est survenue lors du dons de septims');
         }
+        return;
       }
-      return;
-    }
-    
-    else {
-      return message.reply(`Wrong arguments use \`${client.prefix}help ${this.name}\` for usage informations`);
+      
+      else {
+        return message.reply(`Wrong arguments use \`${client.prefix}help ${this.name}\` for usage informations`);
+      }
+    } catch (error) {
+      console.log(error);
+      message.reply('Somthings went wrong');
     }
   }
 };

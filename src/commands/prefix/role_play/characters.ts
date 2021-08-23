@@ -21,60 +21,50 @@ const characters: PrefixCommand = {
       return message.reply('Vous n\'avez pas les droits pour cette command');
     }
 
-    if (!args.length || getUserFromMention(args[0], client)) {
-      const char = await selectChar(message, user);
-      if (!char) return;
-
-      return diplayChar(message, user, char);
-    }
-
-    else if (args[0] === 'new' && args.length >= 3 && getUserFromMention(args[1], client)) {
-      const charName = args.slice(2).join(' ');
-      const choice = await confirmation(message, `Voulez vous vraiment créer le personnage \`${charName}\` pour ${user.tag}`);
-
-      if (choice) {
+    try {
+      if (!args.length || getUserFromMention(args[0], client)) {
+        const char = await selectChar(message, user);
+        if (!char) return;
+  
+        return diplayChar(message, user, char);
+      }
+  
+      else if (args[0] === 'new' && args.length >= 3 && getUserFromMention(args[1], client)) {
+        const charName = args.slice(2).join(' ');
+   
         const res = await createCharacter(user.id, user.tag, charName);
         if (!res) return message.reply(`${user.tag} possède déjà 9 personnages ! Impossible d'en ajouter un nouveau.`);
-        message.reply(`Vous avez bien créé le personnage \`${charName}\` pour ${user.tag}.`);
+        return message.reply(`Vous avez bien créé le personnage \`${charName}\` pour ${user.tag}.`);
       }
-      return;
-    }
-
-    else if (args[0] === 'del') {
-      const char = await selectChar(message, user, 'Quels personnages voulez vous supprimez ?');
-      if (!char) return;
-
-      const choice = await confirmation(message, `Voulez vous vraiment supprimer le personnage \`${char.name}\` pour ${user.tag}`);
-        
-      if (choice) {
-        const del = await delCharacter(user.id, char);
-        if (del) {
+  
+      else if (args[0] === 'del') {
+        const char = await selectChar(message, user, 'Quels personnages voulez vous supprimez ?');
+        if (!char) return;
+  
+        const choice = await confirmation(message, `Voulez vous vraiment supprimer le personnage \`${char.name}\` pour ${user.tag}`);
+          
+        if (choice) {
+          await delCharacter(user.id, char);
           message.reply(`Vous avez bien supprimé le personnage \`${char.name}\` pour ${user.tag}.`);
-        } else {
-          message.reply('Une erreur est survenue lors de la suppression');
         }
+        return;
       }
-      return;
-    }
-
-    else if (args[0] === 'status') {
-      const char = await selectChar(message, user, 'A quels personnages voulez vous changer le status ?');
-      if (!char) return;
-
-      const choice = await confirmation(message, `Voulez vous vraiment changer le statut du personnage \`${char.name}\` pour ${user.tag}`);
-      if (choice) {
-        const status = await updateCharStatus(user.id, char);
-        if (status) {
-          message.reply(`Vous avez bien changer le statut du personnage \`${char.name}\` pour ${user.tag}.`);
-        } else {
-          message.reply('Une erreur est survenue lors du changement de status');
-        }
+  
+      else if (args[0] === 'status') {
+        const char = await selectChar(message, user, 'A quels personnages voulez vous changer le status ?');
+        if (!char) return;
+  
+        await updateCharStatus(user.id, char);
+        message.reply(`Vous avez bien changer le statut du personnage \`${char.name}\` pour ${user.tag}.`);
+        return;
       }
-      return;
-    }
-
-    else {
-      return message.reply(`Wrong arguments use \`${client.prefix}help ${this.name}\` for usage informations`);
+  
+      else {
+        return message.reply(`Wrong arguments use \`${client.prefix}help ${this.name}\` for usage informations`);
+      }
+    } catch (error) {
+      console.log(error);
+      message.reply('Somethings went wrong pls retry later or contact dev');
     }
   }
 };
