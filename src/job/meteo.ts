@@ -48,7 +48,15 @@ function createRandom(beau: number, humide: number, froid: number) {
 const createRandomMemoized = memoized<(() => string)| undefined>(createRandom);
 
 export default function randomMeteo(client: Client): void {
-  setInterval(async () => {
+  channelEditMeteo(client);
+  setInterval(() => {
+    channelEditMeteo(client);
+  }, 60000);
+}
+
+
+async function channelEditMeteo(client: Client) {
+  try {
     const meteos = await getTemps();
     if (!meteos) return;
 
@@ -61,5 +69,7 @@ export default function randomMeteo(client: Client): void {
       const res = randomizeTemp();
       channel.edit({ name: res });
     }));
-  }, 60000);
+  } catch (error) {
+    console.error(error);
+  }
 }

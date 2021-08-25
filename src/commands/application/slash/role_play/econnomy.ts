@@ -5,6 +5,7 @@ import { isAdminOrModo } from '../../../../utils/permissions';
 import { charInteractionSelect } from '../../../../interactions/characterSelector';
 import { addMoneyToCharacter, removeMoneyToCharacter } from '../../../../firebase/users';
 import confirmationInteract from '../../../../interactions/confirmation';
+import { septims } from '../../../../config/env';
 
 const econnmy: SlashCommand = {
   data: new SlashCommandBuilder()
@@ -75,7 +76,7 @@ const econnmy: SlashCommand = {
       
         await addMoneyToCharacter(user.id, char, money);
         return interaction.editReply({
-          content: `Vous avez bien ajouté ${money} :septims: à \`${char.name}\`.`,
+          content: `Vous avez bien ajouté ${money} <:septims:${septims}> à \`${char.name}\`.`,
           components: []
         });
       }
@@ -87,12 +88,12 @@ const econnmy: SlashCommand = {
         const res = await removeMoneyToCharacter(user.id, char, money);
         if (res) {
           return interaction.editReply({
-            content: `Vous avez bien retiré ${money} :septims: à \`${char.name}\`.`,
+            content: `Vous avez bien retiré ${money} <:septims:${septims}> à \`${char.name}\`.`,
             components: []
           });
         }
         return interaction.editReply({
-          content: `Vous ne pouvez pas retirer ${money} :septims: à \`${char.name}\` car il ne dispose pas ce de montant.`,
+          content: `Vous ne pouvez pas retirer ${money} <:septims:${septims}> à \`${char.name}\` car il ne dispose pas ce de montant.`,
           components: []
         });
       }
@@ -119,7 +120,7 @@ const econnmy: SlashCommand = {
   
         const choice = await confirmationInteract(
           interaction, 
-          `Voulez vous vraiment donner ${money} :septims: à \`${receiverChar.name}\` ?`
+          `Voulez vous vraiment donner ${money} <:septims:${septims}> à \`${receiverChar.name}\` ?`
         );
 
         if (choice) {
@@ -127,14 +128,14 @@ const econnmy: SlashCommand = {
   
           if (!rmMoney) {
             return interaction.editReply({
-              content: `Vous ne disposez pas de ${money} :septims: ! Transaction impossible.`,
+              content: `Vous ne disposez pas de ${money} <:septims:${septims}> ! Transaction impossible.`,
               components: []
             });
           }
   
           await addMoneyToCharacter(receiver.id, receiverChar, money);
           interaction.editReply({
-            content: `Vous avez bien donné ${money} :septims: à \`${receiverChar.name}\`.`,
+            content: `Vous avez bien donné ${money} <:septims:${septims}> à \`${receiverChar.name}\`.`,
             components: []
           });
         }

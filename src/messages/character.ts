@@ -1,4 +1,5 @@
-import { Message, MessageActionRow, MessageSelectMenu, MessageSelectOptionData, User, MessageEmbed, SelectMenuInteraction } from 'discord.js';
+import { Message, MessageActionRow, MessageSelectMenu, MessageSelectOptionData, User, MessageEmbed, SelectMenuInteraction, Client } from 'discord.js';
+import { septims } from '../config/env';
 import { getUser } from '../firebase/users';
 import { Character } from '../interfaces/users';
 
@@ -48,7 +49,7 @@ export const selectChar = async (message: Message, user: User, heading = 'Person
   }
 };
 
-export const createCharEmbed = (user: User, character: Character): MessageEmbed => {
+export const createCharEmbed = (user: User, character: Character, client: Client): MessageEmbed => {
   const status = character.status === 1 ? 'Atcif' : 'Inactif';
   const charEmbed = new MessageEmbed()
     .setColor('#2ecc71')
@@ -56,7 +57,7 @@ export const createCharEmbed = (user: User, character: Character): MessageEmbed 
     .setThumbnail(user.avatarURL() || '')
     .addFields(
       { name: 'Nom :', value: character.name, inline: false },
-      { name: 'Septims :', value: `${character.money} :septims:`, inline: false },
+      { name: 'Septims :', value: `${character.money} ${client.emojis.cache.get(septims)}`, inline: false },
       { name: 'Status :', value: status, inline: false },
     );
 
@@ -64,5 +65,5 @@ export const createCharEmbed = (user: User, character: Character): MessageEmbed 
 };
 
 export const diplayChar = async (message: Message, user: User, character: Character): Promise<void> => {
-  message.reply({ embeds: [createCharEmbed(user, character)] });
+  message.reply({ embeds: [createCharEmbed(user, character, message.client)] });
 };

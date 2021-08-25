@@ -5,6 +5,7 @@ import { isAdminOrModo } from '../../../utils/permissions';
 import { selectChar } from '../../../messages/character';
 import confirmation from '../../../messages/confirmation';
 import { addMoneyToCharacter, removeMoneyToCharacter } from '../../../firebase/users';
+import { septims } from '../../../config/env';
 
 const econnmy: PrefixCommand = {
   name: 'money',
@@ -33,7 +34,7 @@ const econnmy: PrefixCommand = {
         if (!char) return;
   
         await addMoneyToCharacter(user.id, char, money);
-        message.reply(`Vous avez bien ajouté ${money} :septims: à \`${char.name}\`.`);
+        message.reply(`Vous avez bien ajouté ${money} <:septims:${septims}> à \`${char.name}\`.`);
         return;
       }
   
@@ -43,9 +44,9 @@ const econnmy: PrefixCommand = {
   
         const res = await removeMoneyToCharacter(user.id, char, money);
         if (res) {
-          message.reply(`Vous avez bien retiré ${money} :septims: à \`${char.name}\`.`);
+          message.reply(`Vous avez bien retiré ${money} <:septims:${septims}> à \`${char.name}\`.`);
         } else {
-          return message.reply(`Vous ne pouvez pas retirer ${money} :septims: à \`${char.name}\` car il ne dispose pas ce de montant.`);
+          return message.reply(`Vous ne pouvez pas retirer ${money} <:septims:${septims}> à \`${char.name}\` car il ne dispose pas ce de montant.`);
         }
         return;
       }
@@ -57,16 +58,16 @@ const econnmy: PrefixCommand = {
         const receiver = await selectChar(message, user, 'Séléctionner le personnage qui va recevoir ');
         if (!receiver) return;
   
-        const choice = await confirmation(message, `Voulez vous vraiment donner ${money} :septims: à \`${receiver.name}\` ?`);
+        const choice = await confirmation(message, `Voulez vous vraiment donner ${money} <:septims:${septims}> à \`${receiver.name}\` ?`);
         if (choice) {
           const rmMoney = await removeMoneyToCharacter(message.author.id, giver, money);
   
           if (!rmMoney) {
-            return message.reply(`Vous ne disposez pas de ${money} :septims: ! Transaction impossible.`);
+            return message.reply(`Vous ne disposez pas de ${money} <:septims:${septims}> ! Transaction impossible.`);
           }
   
           await addMoneyToCharacter(user.id, receiver, money);
-          message.reply(`Vous avez bien donné ${money} :septims: à \`${receiver.name}\`.`);
+          message.reply(`Vous avez bien donné ${money} <:septims:${septims}> à \`${receiver.name}\`.`);
         }
         return;
       }

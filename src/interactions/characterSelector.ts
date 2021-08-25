@@ -60,5 +60,5 @@ export const charInteractionSelect = async (
 };
 
 export const interactionDisplayChar = async (inter: CommandInteraction | ContextMenuInteraction, user: User, character: Character): Promise<void> => {
-  await inter.editReply({ content: null, embeds: [createCharEmbed(user, character)], components: [] });
+  await inter.editReply({ content: null, embeds: [createCharEmbed(user, character, inter.client)], components: [] });
 };
