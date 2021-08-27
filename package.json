@@ -7,7 +7,8 @@
     "start": "del-cli ./build && npm run dev",
     "watch": "nodemon",
     "dev": "tsc && node ./build",
-    "build": "del-cli ./build && tsc"
+    "build": "del-cli ./build && tsc",
+    "copy-files": "copyfiles -u 1 \"src/**/*.js\" build"
   },
   "keywords": [],
   "author": "Remi Launay",
@@ -18,6 +19,7 @@
     "@types/node": "^16.6.1",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
     "@typescript-eslint/parser": "^4.29.1",
+    "copyfiles": "^2.4.1",
     "del-cli": "^4.0.1",
     "eslint": "^7.32.0",
     "nodemon": "^2.0.12",
@@ -26,6 +28,7 @@
   "dependencies": {
     "@discordjs/builders": "^0.5.0",
     "@discordjs/rest": "^0.1.0-canary.0",
+    "canvas": "^2.8.0",
     "cron": "^1.8.2",
     "discord-api-types": "^0.22.0",
     "discord.js": "^13.1.0",

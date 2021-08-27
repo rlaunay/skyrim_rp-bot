@@ -1,7 +1,7 @@
 import { CommandInteraction, ContextMenuInteraction, MessageActionRow, MessageSelectMenu, MessageSelectOptionData, SelectMenuInteraction, User } from 'discord.js';
 import { getUser } from '../firebase/users';
 import { Character } from '../interfaces/users';
-import { createCharEmbed } from '../messages/character';
+import { createCharCanvas } from '../messages/character';
 
 const emote = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'];
 
@@ -60,5 +60,5 @@ export const charInteractionSelect = async (
 };
 
 export const interactionDisplayChar = async (inter: CommandInteraction | ContextMenuInteraction, user: User, character: Character): Promise<void> => {
-  await inter.editReply({ content: null, embeds: [createCharEmbed(user, character, inter.client)], components: [] });
+  await inter.editReply({ content: null, files: [await createCharCanvas(user, character)], components: [] });
 };

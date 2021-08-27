@@ -51,9 +51,8 @@ export default function randomMeteo(client: Client): void {
   channelEditMeteo(client);
   setInterval(() => {
     channelEditMeteo(client);
-  }, 60000);
+  }, 60000 * 60 * 24);
 }
-
 
 async function channelEditMeteo(client: Client) {
   try {
