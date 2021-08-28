@@ -16,13 +16,17 @@ const interactionCreate: Event = {
         await command.execute(interaction);
       } catch (error) {
         console.error(error);
-        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+        await replyAndFetchIt(interaction, { 
+          content: 'Une erreur est survenue, veuillez réessayer plus tard!', 
+          components: [], 
+          embeds: [], 
+          files: [] 
+        });
       }
 
     }
 
     if (interaction.isContextMenu()) {
-      
       const { commandName, client: { userCommands } } = interaction;
       const command = userCommands.get(commandName);
 
@@ -32,7 +36,12 @@ const interactionCreate: Event = {
         await command.execute(interaction);
       } catch (error) {
         console.error(error);
-        await replyAndFetchIt(interaction, { content: 'Une erreur', components: [], embeds: [], files: [] });
+        await replyAndFetchIt(interaction, { 
+          content: 'Une erreur est survenue, veuillez réessayer plus tard', 
+          components: [], 
+          embeds: [], 
+          files: [] 
+        });
       }
 
     }

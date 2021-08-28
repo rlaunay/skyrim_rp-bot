@@ -20,9 +20,9 @@
   "author": "Remi Launay",
   "license": "ISC",
   "devDependencies": {
-    "@types/cron": "^1.7.3",
     "@types/dotenv-safe": "^8.1.2",
     "@types/node": "^16.6.1",
+    "@types/node-cron": "^2.0.4",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
     "@typescript-eslint/parser": "^4.29.1",
     "del-cli": "^4.0.1",
@@ -33,11 +33,12 @@
     "@discordjs/builders": "^0.6.0",
     "@discordjs/rest": "^0.1.0-canary.0",
     "canvas": "^2.8.0",
-    "cron": "^1.8.2",
+    "date-fns-tz": "^1.1.6",
     "discord-api-types": "^0.22.0",
     "discord.js": "^13.1.0",
     "dotenv-safe": "^8.2.0",
     "firebase-admin": "^9.11.0",
+    "node-cron": "^3.0.0",
     "pm2": "^5.1.1"
   }
 }

@@ -7,10 +7,10 @@ import { delCharacter, updateCharStatus, createCharacter } from '../../../fireba
 
 
 const characters: PrefixCommand = {
-  name: 'character',
-  description: 'Allows the management of a user\'s characters',
-  aliases: ['personnage', 'char', 'perso'],
-  usages: ['<@user>', 'new <@user> <character_name>', 'del <@user>', 'status <@user>'],
+  name: 'personnage',
+  description: 'Permets la gestion des personnages d\'un utilisateur',
+  aliases: ['perso'],
+  usages: ['<@user>', 'new <@user> <nom_perso>', 'del <@user>', 'status <@user>'],
   cooldown: 5,
   guildOnly: true,
   async execute(message, args) {
@@ -18,7 +18,7 @@ const characters: PrefixCommand = {
     const user = getUserFromMention(args[0], client) || getUserFromMention(args[1], client) || message.author;
 
     if (['new', 'del', 'status'].includes(args[0]) && message.member && !isAdminOrModo(message.member)) {
-      return message.reply('Vous n\'avez pas les droits pour cette command');
+      return message.reply('Vous n\'avez pas les droits pour cette commande.');
     }
 
     if (!args.length || getUserFromMention(args[0], client)) {
@@ -32,34 +32,34 @@ const characters: PrefixCommand = {
       const charName = args.slice(2).join(' ');
    
       const res = await createCharacter(user.id, user.tag, charName);
-      if (!res) return message.reply(`${user.tag} possède déjà 9 personnages ! Impossible d'en ajouter un nouveau.`);
-      return message.reply(`Vous avez bien créé le personnage \`${charName}\` pour ${user.tag}.`);
+      if (!res) return message.reply(`${user.username} possède déjà 9 personnages ! Impossible d'en ajouter un nouveau.`);
+      return message.reply(`Vous avez bien créé le personnage \`${charName}\` pour ${user.username}.`);
     }
   
     else if (args[0] === 'del') {
-      const char = await messageSelectChar(message, user, 'Quels personnages voulez vous supprimez ?');
+      const char = await messageSelectChar(message, user, 'Quel(s) personnage(s) voulez-vous supprimer ?');
       if (!char) return;
   
-      const choice = await messageConfirmation(message, `Voulez vous vraiment supprimer le personnage \`${char.name}\` pour ${user.tag}`);
+      const choice = await messageConfirmation(message, `Voulez-vous vraiment supprimer le personnage \`${char.name}\` pour ${user.username} ?`);
           
       if (choice) {
         await delCharacter(user.id, char);
-        message.reply(`Vous avez bien supprimé le personnage \`${char.name}\` pour ${user.tag}.`);
+        message.reply(`Vous avez bien supprimé le personnage \`${char.name}\` pour ${user.username}.`);
       }
       return;
     }
   
     else if (args[0] === 'status') {
-      const char = await messageSelectChar(message, user, 'A quels personnages voulez vous changer le status ?');
+      const char = await messageSelectChar(message, user, 'À quel(s) personnage(s) voulez-vous changer le status.');
       if (!char) return;
   
       await updateCharStatus(user.id, char);
-      message.reply(`Vous avez bien changer le statut du personnage \`${char.name}\` pour ${user.tag}.`);
+      message.reply(`Vous avez bien changer le statut du personnage \`${char.name}\` pour ${user.username}.`);
       return;
     }
   
     else {
-      return message.reply(`Wrong arguments use \`${client.prefix}help ${this.name}\` for usage informations`);
+      return message.reply(`Mauvais arguments, utilisez ${client.prefix}help ${this.name} pour plus d'informations.`);
     }
   }
 };

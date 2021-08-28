@@ -18,7 +18,7 @@ export default async function interactionConfimation(inter: CommandInteraction, 
       return false;
     }
   } catch (error) {
-    await inter.editReply({ content: 'Somthings went wrong!', components: [] });
+    await inter.editReply({ content: 'Temps expiré!', components: [] });
     return false;
   }
 }

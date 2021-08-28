@@ -1,9 +1,11 @@
 import { Client, StageChannel, VoiceChannel } from 'discord.js';
-import { CronJob } from 'cron'; 
+import cron from 'node-cron';
+import { utcToZonedTime } from 'date-fns-tz';
 import { channelId } from './../config/env';
 
 async function updateChan(chan: VoiceChannel | StageChannel) {
-  const date = new Date();
+  const utcDate = new Date();
+  const date = utcToZonedTime(utcDate, 'Europe/Paris');
 
   const skyrimDay = [
     'Sundas',
@@ -52,20 +54,16 @@ export default async function calendar(client: Client): Promise<void> {
     const channel = await client.channels.fetch(channelId);
 
     if (channel && channel.isVoice()) {
-      const job = new CronJob({
-        cronTime: '0 5 1 * * *',
-        onTick: () => {
-          updateChan(channel);
-        },
-        timeZone: 'Europe/Paris',
-        runOnInit: true,
+      updateChan(channel);
+      cron.schedule('5 0 * * *', () => {
+        updateChan(channel);
+      }, {
+        timezone: 'Europe/Paris'
       });
-      job.start();
     } else {
       throw new Error('Calendar channel id must be a voice channel');
     }
   } catch (e) {
-    console.log(e);
-    throw new Error('Somthing went wrong');
+    console.error(e);
   }
 }

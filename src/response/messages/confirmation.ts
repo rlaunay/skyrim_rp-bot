@@ -19,7 +19,7 @@ export default async function messageConfirmation(message: Message, text: string
       return false;
     }
   } catch (error) {
-    await reply.edit({ content: 'temps ecouler', components: [] });
+    await reply.edit({ content: 'Temps expiré', components: [] });
     return false;
   }
 }

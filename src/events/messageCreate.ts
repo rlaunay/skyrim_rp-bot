@@ -13,18 +13,18 @@ const messageCreate: Event = {
 
     const command = prefixCommands.get(commandName) || prefixCommands.find((cmd) => !!cmd.aliases?.includes(commandName));
 
-    if (!command) return message.reply('Command not found!');
+    if (!command) return message.reply('Commande inexistante!');
 
-    if (command.guildOnly && message.channel.type === 'DM') return message.reply('I can\'t execute that command inside DMs!');
+    if (command.guildOnly && message.channel.type === 'DM') return message.reply('Je ne peux pas exécuter cette commande dans les MPs!');
 
     if (command.args && !args.length) {
-      message.reply(`You did't provide any arguments, Use ${prefix}help ${command.name} for more informations`);
+      message.reply(`Vous n'avez fourni aucun argument, utilisez ${prefix}help ${command.name} pour plus d'informations`);
       return;
     }
 
     if (command.permissions) {
       if (!message.member?.permissions.has(command.permissions)) {
-        return message.reply('You can\'t do this!');
+        return message.reply('Vous n\'avez pas les permissions!');
       }
     }
 
@@ -41,7 +41,7 @@ const messageCreate: Event = {
 
       if (now < expirationTime) {
         const timeLeft = (expirationTime - now) / 1000;
-        message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
+        message.reply(`**${message.author.username}**, merci de patienter ${timeLeft.toFixed(1)} secondes avant d'utiliser cette commande.`);
         return;
       }
     }
@@ -53,7 +53,7 @@ const messageCreate: Event = {
       await command.execute(message, args);
     } catch (error) {
       console.error(error);
-      message.reply('There was an error when trying to execute that command!');
+      message.reply('Une erreur est survenue, veuillez réessayer plus tard!');
     }
 
   }

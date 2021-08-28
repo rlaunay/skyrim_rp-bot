@@ -10,7 +10,7 @@ import interactionConfimation from '../../../../response/interactions/confirmati
 const characters: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName('perso')
-    .setDescription('List les personnages')
+    .setDescription('Permets la gestion des personnages d\'un utilisateur')
     .addSubcommand(subCommand => 
       subCommand
         .setName('info')
@@ -20,7 +20,7 @@ const characters: SlashCommand = {
     .addSubcommand(subCommand => 
       subCommand
         .setName('new')
-        .setDescription('Ajoute un nouveau perso')
+        .setDescription('Ajoute un nouveau personnage')
         .addUserOption(option => option.setName('user').setDescription('Joueur cible').setRequired(true))
         .addStringOption(option => option.setName('nom').setDescription('Nom du personnage').setRequired(true))
     )
@@ -38,7 +38,7 @@ const characters: SlashCommand = {
     ),
   async execute(interaction) {
     if (['new', 'del', 'status'].includes(interaction.options.getSubcommand()) && !isAdminOrModo(interaction.member as GuildMember)) {
-      return interaction.reply('Vous n\'avez pas les droits pour cette command');
+      return interaction.reply('Vous n\'avez pas les droits pour cette commande');
     }
 
     const user = interaction.options.getUser('user') || interaction.user;
@@ -55,21 +55,21 @@ const characters: SlashCommand = {
       const charName = interaction.options.getString('nom', true);
 
       const res = await createCharacter(user.id, user.tag, charName);
-      if (!res) return interaction.reply(`${user.tag} possède déjà 9 personnages ! Impossible d'en ajouter un nouveau.`);
+      if (!res) return interaction.reply(`${user.username} possède déjà 9 personnages ! Impossible d'en ajouter un nouveau.`);
 
-      return interaction.reply(`Vous avez bien créé le personnage \`${charName}\` pour ${user.tag}.`);
+      return interaction.reply(`Vous avez bien créé le personnage \`${charName}\` pour ${user.username}.`);
     }
 
     if (interaction.options.getSubcommand() === 'del') {
-      const char = await interactionSelectChar(interaction, user);
+      const char = await interactionSelectChar(interaction, user, 'Quel(s) personnage(s) voulez-vous supprimer ?');
       if (!char) return;
 
-      const choice = await interactionConfimation(interaction, `Voulez vous vraiment supprimer le personnage \`${char.name}\` pour ${user.tag}`);
+      const choice = await interactionConfimation(interaction, `Voulez-vous vraiment supprimer le personnage \`${char.name}\` pour ${user.username} ?`);
           
       if (choice) {
         await delCharacter(user.id, char);
         interaction.editReply({ 
-          content: `Vous avez bien supprimé le personnage \`${char.name}\` pour ${user.tag}.`,
+          content: `Vous avez bien supprimé le personnage \`${char.name}\` pour ${user.username}.`,
           components: []
         });
       }
@@ -77,12 +77,12 @@ const characters: SlashCommand = {
     }
 
     if (interaction.options.getSubcommand() === 'status') {
-      const char = await interactionSelectChar(interaction, user);
+      const char = await interactionSelectChar(interaction, user, 'À quel(s) personnage(s) voulez-vous changer le status.');
       if (!char) return;
 
       await updateCharStatus(user.id, char);
       return interaction.editReply({ 
-        content: `Vous avez bien changer le statut du personnage \`${char.name}\` pour ${user.tag}.`,
+        content: `Vous avez bien changer le statut du personnage \`${char.name}\` pour ${user.username}.`,
         components: []
       });
     }

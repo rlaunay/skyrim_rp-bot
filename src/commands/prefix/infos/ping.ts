@@ -1,14 +1,19 @@
+import { MessageEmbed } from 'discord.js';
 import { PrefixCommand } from '../../../interfaces/commands';
 
 const ping: PrefixCommand = {
   name: 'ping',
-  description: 'Send ping command',
+  description: 'Envoie un ping',
   async execute (message) {
-    const before = Date.now();
-    const response = await message.reply('Pong');
-    const after = Date.now();
+    const reply = await message.reply('Pinging...');
+    const botPing = reply.createdTimestamp - message.createdTimestamp;
+    const apiPing = Math.round(message.client.ws.ping);
 
-    response.edit(`Pong **(${after - before}ms)**`);
+    const embed = new MessageEmbed()
+      .setTitle('🏓 **Pong!**')
+      .setDescription(`**BOT:** \`${botPing}ms\`\n**API:** \`${apiPing}ms\``);
+
+    await reply.edit({ content: null, embeds: [embed] });
   }
 };
 
