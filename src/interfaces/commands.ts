@@ -12,18 +12,18 @@ export interface PrefixCommand {
   args?: boolean;
   permissions?: Permissions;
 
-  execute: (message: Message, args: string[]) => void;
+  execute: (message: Message, args: string[]) => Promise<unknown> | void;
 }
 
 export interface SlashCommand {
   data: SlashCommandBuilder | SlashCommandSubcommandBuilder | SlashCommandSubcommandsOnlyBuilder;
-  execute: (interaction: CommandInteraction) => void;
+  execute: (interaction: CommandInteraction) => Promise<unknown> | void;
 }
 
 export interface UserCommand {
   name: string;
   type: 2;
-  execute: (interaction: ContextMenuInteraction) => void;
+  execute: (interaction: ContextMenuInteraction) => Promise<unknown> | void;
 }
 
 export type JsonCmd = {

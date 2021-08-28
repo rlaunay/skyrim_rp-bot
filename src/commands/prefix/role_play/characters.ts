@@ -1,6 +1,6 @@
 import { PrefixCommand } from '../../../interfaces/commands';
-import { selectChar, diplayChar } from '../../../messages/character';
-import confirmation from '../../../messages/confirmation';
+import { messageSelectChar, messageDiplayChar } from '../../../response/messages/character';
+import messageConfirmation from '../../../response/messages/confirmation';
 import { getUserFromMention } from '../../../utils/mentions';
 import { isAdminOrModo } from '../../../utils/permissions';
 import { delCharacter, updateCharStatus, createCharacter } from '../../../firebase/users';
@@ -21,50 +21,45 @@ const characters: PrefixCommand = {
       return message.reply('Vous n\'avez pas les droits pour cette command');
     }
 
-    try {
-      if (!args.length || getUserFromMention(args[0], client)) {
-        const char = await selectChar(message, user);
-        if (!char) return;
+    if (!args.length || getUserFromMention(args[0], client)) {
+      const char = await messageSelectChar(message, user);
+      if (!char) return;
   
-        return diplayChar(message, user, char);
-      }
+      return messageDiplayChar(message, user, char);
+    }
   
-      else if (args[0] === 'new' && args.length >= 3 && getUserFromMention(args[1], client)) {
-        const charName = args.slice(2).join(' ');
+    else if (args[0] === 'new' && args.length >= 3 && getUserFromMention(args[1], client)) {
+      const charName = args.slice(2).join(' ');
    
-        const res = await createCharacter(user.id, user.tag, charName);
-        if (!res) return message.reply(`${user.tag} possède déjà 9 personnages ! Impossible d'en ajouter un nouveau.`);
-        return message.reply(`Vous avez bien créé le personnage \`${charName}\` pour ${user.tag}.`);
-      }
+      const res = await createCharacter(user.id, user.tag, charName);
+      if (!res) return message.reply(`${user.tag} possède déjà 9 personnages ! Impossible d'en ajouter un nouveau.`);
+      return message.reply(`Vous avez bien créé le personnage \`${charName}\` pour ${user.tag}.`);
+    }
   
-      else if (args[0] === 'del') {
-        const char = await selectChar(message, user, 'Quels personnages voulez vous supprimez ?');
-        if (!char) return;
+    else if (args[0] === 'del') {
+      const char = await messageSelectChar(message, user, 'Quels personnages voulez vous supprimez ?');
+      if (!char) return;
   
-        const choice = await confirmation(message, `Voulez vous vraiment supprimer le personnage \`${char.name}\` pour ${user.tag}`);
+      const choice = await messageConfirmation(message, `Voulez vous vraiment supprimer le personnage \`${char.name}\` pour ${user.tag}`);
           
-        if (choice) {
-          await delCharacter(user.id, char);
-          message.reply(`Vous avez bien supprimé le personnage \`${char.name}\` pour ${user.tag}.`);
-        }
-        return;
+      if (choice) {
+        await delCharacter(user.id, char);
+        message.reply(`Vous avez bien supprimé le personnage \`${char.name}\` pour ${user.tag}.`);
       }
+      return;
+    }
   
-      else if (args[0] === 'status') {
-        const char = await selectChar(message, user, 'A quels personnages voulez vous changer le status ?');
-        if (!char) return;
+    else if (args[0] === 'status') {
+      const char = await messageSelectChar(message, user, 'A quels personnages voulez vous changer le status ?');
+      if (!char) return;
   
-        await updateCharStatus(user.id, char);
-        message.reply(`Vous avez bien changer le statut du personnage \`${char.name}\` pour ${user.tag}.`);
-        return;
-      }
+      await updateCharStatus(user.id, char);
+      message.reply(`Vous avez bien changer le statut du personnage \`${char.name}\` pour ${user.tag}.`);
+      return;
+    }
   
-      else {
-        return message.reply(`Wrong arguments use \`${client.prefix}help ${this.name}\` for usage informations`);
-      }
-    } catch (error) {
-      console.log(error);
-      message.reply('Somethings went wrong pls retry later or contact dev');
+    else {
+      return message.reply(`Wrong arguments use \`${client.prefix}help ${this.name}\` for usage informations`);
     }
   }
 };

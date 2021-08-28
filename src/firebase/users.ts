@@ -2,15 +2,11 @@ import { db, admin } from './config';
 import { Character, characterConverter } from './../interfaces/users';
 
 export const getUser = async (id: string): Promise<Character[] | null> => {
-  try {
-    const charsRef = await db.collection(`users/${id}/characters`).withConverter(characterConverter).get();
-    if (charsRef.size > 0) {
-      return charsRef.docs.map((doc) => ({ ...doc.data() }));
-    }
-    return null;
-  } catch (error) {
-    throw new Error('Somthing went wrong');
+  const charsRef = await db.collection(`users/${id}/characters`).withConverter(characterConverter).get();
+  if (charsRef.size > 0) {
+    return charsRef.docs.map((doc) => ({ ...doc.data() }));
   }
+  return null;
 };
 
 export const createCharacter = async (discordId: string, discordTag: string, charName: string): Promise<boolean> => {

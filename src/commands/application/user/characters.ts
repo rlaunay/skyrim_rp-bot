@@ -1,5 +1,5 @@
 import { UserCommand } from '../../../interfaces/commands';
-import { charInteractionSelect, interactionDisplayChar } from '../../../interactions/characterSelector';
+import { interactionSelectChar, interactionDisplayChar } from '../../../response/interactions/character';
 
 const characters: UserCommand = {
   name: 'perso',
@@ -7,7 +7,7 @@ const characters: UserCommand = {
   async execute(interaction) {
     const user = interaction.options.getUser('user', true);
 
-    const char = await charInteractionSelect(interaction, user);
+    const char = await interactionSelectChar(interaction, user);
     if (!char) return;
 
     return await interactionDisplayChar(interaction, user, char);

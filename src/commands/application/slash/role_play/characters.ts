@@ -1,10 +1,10 @@
 import { SlashCommand } from '../../../../interfaces/commands';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { charInteractionSelect, interactionDisplayChar } from '../../../../interactions/characterSelector';
+import { interactionSelectChar, interactionDisplayChar } from '../../../../response/interactions/character';
 import { createCharacter, delCharacter, updateCharStatus } from '../../../../firebase/users';
 import { isAdminOrModo } from '../../../../utils/permissions';
 import { GuildMember } from 'discord.js';
-import confirmationInteract from '../../../../interactions/confirmation';
+import interactionConfimation from '../../../../response/interactions/confirmation';
 
 
 const characters: SlashCommand = {
@@ -45,7 +45,7 @@ const characters: SlashCommand = {
 
 
     if (interaction.options.getSubcommand() === 'info') {
-      const char = await charInteractionSelect(interaction, user);
+      const char = await interactionSelectChar(interaction, user);
       if (!char) return;
 
       return await interactionDisplayChar(interaction, user, char);
@@ -61,10 +61,10 @@ const characters: SlashCommand = {
     }
 
     if (interaction.options.getSubcommand() === 'del') {
-      const char = await charInteractionSelect(interaction, user);
+      const char = await interactionSelectChar(interaction, user);
       if (!char) return;
 
-      const choice = await confirmationInteract(interaction, `Voulez vous vraiment supprimer le personnage \`${char.name}\` pour ${user.tag}`);
+      const choice = await interactionConfimation(interaction, `Voulez vous vraiment supprimer le personnage \`${char.name}\` pour ${user.tag}`);
           
       if (choice) {
         await delCharacter(user.id, char);
@@ -77,7 +77,7 @@ const characters: SlashCommand = {
     }
 
     if (interaction.options.getSubcommand() === 'status') {
-      const char = await charInteractionSelect(interaction, user);
+      const char = await interactionSelectChar(interaction, user);
       if (!char) return;
 
       await updateCharStatus(user.id, char);
