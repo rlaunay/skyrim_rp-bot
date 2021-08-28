@@ -1,8 +1,8 @@
-import { Client, VoiceChannel } from 'discord.js';
+import { Client, StageChannel, VoiceChannel } from 'discord.js';
 import { CronJob } from 'cron'; 
 import { channelId } from './../config/env';
 
-async function updateChan(chan: VoiceChannel) {
+async function updateChan(chan: VoiceChannel | StageChannel) {
   const date = new Date();
 
   const skyrimDay = [
@@ -51,11 +51,11 @@ export default async function calendar(client: Client): Promise<void> {
   try {
     const channel = await client.channels.fetch(channelId);
 
-    if (channel && channel.type === 'GUILD_VOICE') {
+    if (channel && channel.isVoice()) {
       const job = new CronJob({
         cronTime: '0 5 1 * * *',
         onTick: () => {
-          updateChan(channel as VoiceChannel);
+          updateChan(channel);
         },
         timeZone: 'Europe/Paris',
         runOnInit: true,

@@ -1,6 +1,8 @@
-import { Message, Permissions } from 'discord.js';
+import { CommandInteraction, ContextMenuInteraction, Message, Permissions } from 'discord.js';
+import { SlashCommandBuilder, SlashCommandSubcommandBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders';
+import { APIApplicationCommandOption } from 'discord-api-types';
 
-export interface Command {
+export interface PrefixCommand {
   name: string;
   description: string;
   aliases?: string[];
@@ -10,5 +12,29 @@ export interface Command {
   args?: boolean;
   permissions?: Permissions;
 
-  execute: (message: Message, args: string[]) => void;
+  execute: (message: Message, args: string[]) => Promise<unknown> | void;
+}
+
+export interface SlashCommand {
+  data: SlashCommandBuilder | SlashCommandSubcommandBuilder | SlashCommandSubcommandsOnlyBuilder;
+  execute: (interaction: CommandInteraction) => Promise<unknown> | void;
+}
+
+export interface UserCommand {
+  name: string;
+  type: 2;
+  execute: (interaction: ContextMenuInteraction) => Promise<unknown> | void;
+}
+
+export type JsonCmd = {
+  name: string;
+  type?: number;
+  description?: string;
+  options?: APIApplicationCommandOption[];
+}
+
+export enum Type {
+  CHANNEL_INPUT = 1,
+  USER = 2,
+  MESSAGE = 3
 }

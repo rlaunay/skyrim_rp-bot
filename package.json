@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "del-cli ./build && npm run dev",
-    "watch": "nodemon",
-    "dev": "tsc && node ./build",
-    "build": "del-cli ./build && tsc"
+    "start": "npm run build && node ./build",
+    "build": "del-cli ./build && tsc",
+    "dev": "npm run build && pm2 start ecosystem.config.js",
+    "stop": "pm2 stop ecosystem.config.js",
+    "delete": "pm2 delete ecosystem.config.js",
+    "list": "pm2 list",
+    "prod": "npm run build && pm2-runtime start ecosystem.config.js"
   },
   "keywords": [],
   "author": "Remi Launay",
@@ -20,13 +23,17 @@
     "@typescript-eslint/parser": "^4.29.1",
     "del-cli": "^4.0.1",
     "eslint": "^7.32.0",
-    "nodemon": "^2.0.12",
     "typescript": "^4.3.5"
   },
   "dependencies": {
+    "@discordjs/builders": "^0.6.0",
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "canvas": "^2.8.0",
     "cron": "^1.8.2",
+    "discord-api-types": "^0.22.0",
     "discord.js": "^13.1.0",
     "dotenv-safe": "^8.2.0",
-    "firebase-admin": "^9.11.0"
+    "firebase-admin": "^9.11.0",
+    "pm2": "^5.1.1"
   }
 }

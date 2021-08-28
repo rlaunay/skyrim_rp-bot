@@ -1,18 +1,18 @@
 import { MessageEmbed } from 'discord.js';
-import { Command } from '../../../interfaces/commands';
+import { PrefixCommand } from '../../../interfaces/commands';
 
-const help: Command = {
+const help: PrefixCommand = {
   name: 'help',
   description: 'List all of my commands or info about a specific command.',
   aliases: ['aled'],
-  usages: ['[command name]'],
+  usages: ['<command name>'],
   cooldown: 5,
   execute(message, args) {
     const reply = new MessageEmbed().setColor('#2ecc71');
-    const { commands, prefix } = message.client;
+    const { prefixCommands, prefix } = message.client;
 
     if (!args.length) {
-      const commandsName = commands.map((command) => command.name).join(', ');
+      const commandsName = prefixCommands.map((command) => command.name).join(', ');
       reply
         .setTitle('Here\'s a list of all my commands')
         .setDescription(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command`)
@@ -22,7 +22,7 @@ const help: Command = {
     }
 
     const name = args[0].toLowerCase();
-    const command = commands.get(name) || commands.find((cmd) => !!cmd.aliases?.includes(name));
+    const command = prefixCommands.get(name) || prefixCommands.find((cmd) => !!cmd.aliases?.includes(name));
     if (!command) return message.reply('Command not found!');
 
     reply.setTitle(`Help for the ${command.name} command`);

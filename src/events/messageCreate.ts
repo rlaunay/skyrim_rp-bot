@@ -3,15 +3,15 @@ import Event from '../interfaces/event';
 
 const messageCreate: Event = {
   name: 'messageCreate',
-  execute: (message: Message) => {
-    const { prefix, commands, cooldowns } = message.client;
+  execute: async (message: Message) => {
+    const { prefix, prefixCommands, cooldowns } = message.client;
 
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const commandName = args.shift()?.toLowerCase() || '';
 
-    const command = commands.get(commandName) || commands.find((cmd) => !!cmd.aliases?.includes(commandName));
+    const command = prefixCommands.get(commandName) || prefixCommands.find((cmd) => !!cmd.aliases?.includes(commandName));
 
     if (!command) return message.reply('Command not found!');
 
@@ -50,7 +50,7 @@ const messageCreate: Event = {
     setTimeout(() => timestamps?.delete(message.author.id), cooldownsAmount);
 
     try {
-      command.execute(message, args);
+      await command.execute(message, args);
     } catch (error) {
       console.error(error);
       message.reply('There was an error when trying to execute that command!');

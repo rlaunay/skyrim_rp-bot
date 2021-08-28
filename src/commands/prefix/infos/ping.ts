@@ -1,9 +1,9 @@
-import { Command } from '../../../interfaces/commands';
+import { PrefixCommand } from '../../../interfaces/commands';
 
-const ping: Command = {
+const ping: PrefixCommand = {
   name: 'ping',
   description: 'Send ping command',
-  execute: async (message) => {
+  async execute (message) {
     const before = Date.now();
     const response = await message.reply('Pong');
     const after = Date.now();
