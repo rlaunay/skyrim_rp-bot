@@ -1,7 +1,6 @@
 module.exports = {
   apps : [{
     name   : 'skyrim_bot',
-    script : './build/index.js',
-    instances: 'max'
+    script : './build/index.js'
   }]
 };
