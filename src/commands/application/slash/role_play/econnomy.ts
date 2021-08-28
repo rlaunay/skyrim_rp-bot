@@ -107,7 +107,7 @@ const econnmy: SlashCommand = {
         'Séléctionner le personnage qui va donné '
       );
       if (!giverChar) return;
-  
+
       const receiverChar = await interactionSelectChar(
         interaction, 
         receiver,

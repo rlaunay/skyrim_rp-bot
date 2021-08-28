@@ -1,5 +1,6 @@
 import { CommandInteraction, Interaction } from 'discord.js';
 import Event from '../interfaces/event';
+import { replyAndFetchIt } from '../response/interactions/reply';
 
 const interactionCreate: Event = {
   name: 'interactionCreate',
@@ -31,7 +32,7 @@ const interactionCreate: Event = {
         await command.execute(interaction);
       } catch (error) {
         console.error(error);
-        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+        await replyAndFetchIt(interaction, { content: 'Une erreur', components: [], embeds: [], files: [] });
       }
 
     }

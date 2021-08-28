@@ -12,7 +12,7 @@ export async function interactionSelectChar (
 ): Promise<Character | undefined> {
   const allUserChars = await getUser(user.id);
   if (!allUserChars) {
-    inter.reply(`<@${user.id}> ne possède pas encore de personnages.`);
+    await replyAndFetchIt(inter, { content: `<@${user.id}> ne possède pas encore de personnages.`, components: [] });
     return;
   }
 
@@ -28,8 +28,7 @@ export async function interactionSelectChar (
     await res.deferUpdate();
     return allUserChars[+res.values[0]];
   } catch (error) {
-    console.log('no interaction');
-    inter.deleteReply();
+    await inter.editReply({ content: 'temps ecouler', components: [] });
   }
 }
 

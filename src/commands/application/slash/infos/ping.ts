@@ -8,10 +8,10 @@ const ping: SlashCommand = {
     .setDescription('Send ping request'),
   async execute(interaction) {
     const ms1 = Date.now();
-    await interaction.client.application?.fetchAssets();
+    await interaction.reply({ content: '🏓 Pong' });
     const ms2 = Date.now();
 
-    interaction.reply({ content: `Pong (**${ms2 - ms1}ms**)` });
+    await interaction.editReply({ content: `🏓 Pong (**${ms2 - ms1}ms**)` });
   }
 };
 

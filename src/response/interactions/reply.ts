@@ -1,13 +1,14 @@
 import { CommandInteraction, ContextMenuInteraction, Message, WebhookEditMessageOptions } from 'discord.js';
 
 export async function replyAndFetchIt(interaction: CommandInteraction | ContextMenuInteraction, replyObj: WebhookEditMessageOptions): Promise<Message> {
-  if (interaction.replied) {
-    await interaction.editReply(replyObj);
-  } else {
-    await interaction.reply(replyObj);
-  }
+  let reply = null;
 
-  const reply = await interaction.fetchReply();
+  if (interaction.replied) {
+    reply = await interaction.editReply(replyObj);
+  } else {
+    reply = await interaction.reply({ ...replyObj, fetchReply: true });
+  }
+  
   if (reply.type !== 'APPLICATION_COMMAND') throw new Error('No app command');
   return reply;
 }
